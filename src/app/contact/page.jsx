@@ -32,10 +32,10 @@ export default function ContactPage() {
               <div className="border border-ink-600 rounded-xl p-5">
                 <p className="font-mono text-xs text-cream-200/40 uppercase tracking-widest mb-1">Email</p>
                 <a
-                  href="mailto:Ayodeji@jaladedev.com"
+                  href="mailto:lajadelabs@gmail.com"
                   className="text-cream-100 hover:text-electric-400 transition-colors font-semibold"
                 >
-                  Ayodeji@jaladedev.com
+                  lajadelabs@gmail.com
                 </a>
               </div>
               <div className="border border-ink-600 rounded-xl p-5">
@@ -46,18 +46,18 @@ export default function ContactPage() {
                   rel="noopener noreferrer"
                   className="text-cream-100 hover:text-electric-400 transition-colors font-semibold"
                 >
-                  github.com/jaladedev
+                  github.com/JaladeAlan
                 </a>
               </div>
               <div className="border border-ink-600 rounded-xl p-5">
                 <p className="font-mono text-xs text-cream-200/40 uppercase tracking-widest mb-1">LinkedIn</p>
                 <a
-                  href="https://linkedin.com/in/jaladedev"
+                  href="https://linkedin.com/in/ayodejialalade"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-cream-100 hover:text-electric-400 transition-colors font-semibold"
                 >
-                  linkedin.com/in/jaladedev
+                  linkedin.com/in/ayodejialalade
                 </a>
               </div>
             </div>
