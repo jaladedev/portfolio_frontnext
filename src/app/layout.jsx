@@ -113,6 +113,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${playfair.variable} ${dmMono.variable} ${jakarta.variable}`}
     >
       <head>

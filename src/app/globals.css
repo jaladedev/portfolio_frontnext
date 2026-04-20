@@ -133,3 +133,15 @@ a {
 hr {
   border-color: var(--color-border);
 }
+
+@keyframes revealText {
+  0%   { clip-path: inset(0 100% 0 0); }
+  50%  { clip-path: inset(0 0%   0 0); }
+  100% { clip-path: inset(0 0    0 100%); }
+}
+
+@keyframes slideBar {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(0); }
+  100% { transform: translateX(100%); }
+}
