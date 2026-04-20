@@ -58,10 +58,11 @@ export default function Navbar() {
               {item.name}
             </Link>
           ))}
+          {/* CTA — links to quote page */}
           <Link
-            href="/contact"
-            className="font-mono text-sm px-4 py-2 border border-electric-400/50 text-electric-400
-                       rounded hover:bg-electric-400/10 transition-all"
+            href="/quote"
+            className="font-mono text-sm px-4 py-2 border border-amber-500/50 text-amber-400
+                       rounded hover:bg-amber-500/10 transition-all"
           >
             Get a Quote
           </Link>
@@ -94,9 +95,9 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/contact"
-            className="mt-4 block text-center font-mono text-sm px-4 py-3 bg-electric-500
-                       text-white rounded transition-colors hover:bg-electric-400"
+            href="/quote"
+            className="mt-4 block text-center font-mono text-sm px-4 py-3 bg-amber-600
+                       text-white rounded transition-colors hover:bg-amber-500"
           >
             Get a Quote
           </Link>

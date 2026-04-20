@@ -1,8 +1,9 @@
-import { getProjects, getSkills, getExperience } from "../src/lib/supabase";
-import HeroSection from "../src/components/HeroSection";
-import SkillsSection from "../src/components/SkillsSection";
-import ProjectCard from "../src/components/ProjectCard";
-import ExperienceTimeline from "../src/components/ExperienceTimeline";
+import { getProjects, getSkills, getExperience } from "@/lib/supabase";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import SkillsSection from "@/components/SkillsSection";
+import ProjectCard from "@/components/ProjectCard";
+import ExperienceTimeline from "@/components/ExperienceTimeline";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -37,66 +38,7 @@ export default async function HomePage() {
       <HeroSection />
 
       {/* ── About ──────────────────────────────────────────── */}
-      <section
-        id="about"
-        className="py-28 px-4 sm:px-6 lg:px-8 bg-ink-800 relative overflow-hidden"
-      >
-        <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-electric-400/30 to-transparent" />
-
-        <div className="max-w-4xl mx-auto">
-          <p className="font-mono text-electric-400 text-sm tracking-widest uppercase mb-4">
-            01 / About
-          </p>
-
-          <h2 className="font-display text-4xl sm:text-5xl text-cream-100 mb-8 leading-tight">
-            Building things that<br />
-            <span className="text-electric-400">actually work</span>.
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div>
-              <p className="text-cream-200/70 text-lg leading-relaxed mb-6">
-                {about.intro} {about.focus}
-              </p>
-              <p className="text-cream-200/70 text-lg leading-relaxed">
-                {about.availability}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <InfoCard label="Based in" value="Lagos, Nigeria 🇳🇬" />
-
-              <InfoCard
-                label="Specialization"
-                value="Laravel · React · Next.js"
-              />
-
-              <div className="border border-ink-600 rounded-lg p-5 bg-ink-900/50">
-                <p className="font-mono text-electric-400 text-sm mb-1">
-                  Status
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  <p className="text-cream-100 font-semibold">
-                    Available for hire
-                  </p>
-                </div>
-              </div>
-
-              <a
-                href="/resume.pdf"
-                download
-                className="flex items-center gap-2 justify-center w-full border border-cream-200/20 rounded-lg p-4
-                           text-cream-100 hover:border-electric-400 hover:text-electric-400 transition-all duration-300
-                           font-mono text-sm tracking-wide"
-              >
-                Download Resume
-                <ArrowRight size={14} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AboutSection firstName={firstName} lastName={lastName} about={about} />
 
       {/* ── Skills ─────────────────────────────────────────── */}
       <SkillsSection skills={skills} />

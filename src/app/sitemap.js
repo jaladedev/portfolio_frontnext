@@ -1,6 +1,6 @@
 import { getAllProjectIds } from "@/lib/supabase";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jaladedev.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 export default async function sitemap() {
   const projectIds = await getAllProjectIds().catch(() => []);
@@ -20,3 +20,4 @@ export default async function sitemap() {
 
   return [...staticRoutes, ...projectRoutes];
 }
+

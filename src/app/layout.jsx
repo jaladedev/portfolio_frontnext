@@ -1,7 +1,8 @@
 import { Playfair_Display, DM_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "../src/components/Navbar";
-import Footer from "../src/components/Footer";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import PageLoader from "@/components/PageLoader";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -23,11 +24,12 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jaladedev.com";
+const ownerName = process.env.NEXT_PUBLIC_OWNER_NAME?.trim() || "Ayodeji Alalade";
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Ayodeji Alalade — Full Stack Developer",
+    default: `${ownerName} — Full Stack Developer`,
     template: "%s | JaladeDev",
   },
   description:
@@ -44,14 +46,14 @@ export const metadata = {
     "REST API",
     "JaladeDev",
   ],
-  authors: [{ name: "Ayodeji Alalade", url: siteUrl }],
-  creator: "Ayodeji Alalade",
+  authors: [{ name: ownerName, url: siteUrl }],
+  creator: ownerName,
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
     siteName: "JaladeDev",
-    title: "Ayodeji Alalade — Full Stack Developer",
+    title: `${ownerName} — Full Stack Developer`,
     description:
       "Full Stack Developer specializing in Laravel & React. Building scalable APIs and modern web experiences.",
     images: [
@@ -59,13 +61,13 @@ export const metadata = {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "JaladeDev — Ayodeji Alalade Portfolio",
+        alt: `JaladeDev — ${ownerName} Portfolio`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ayodeji Alalade — Full Stack Developer",
+    title: `${ownerName} — Full Stack Developer`,
     description:
       "Full Stack Developer specializing in Laravel & React. Building scalable APIs and modern web experiences.",
     images: [`${siteUrl}/og-image.png`],
@@ -82,33 +84,20 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    // google: "your-google-verification-code",
-    // yandex: "your-yandex-code",
-  },
   alternates: {
     canonical: siteUrl,
   },
 };
 
-// JSON-LD Person structured data
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Ayodeji Alalade",
+  name: ownerName,
   url: siteUrl,
   jobTitle: "Full Stack Developer",
   description:
     "Full Stack Developer specializing in Laravel and React, building scalable APIs and modern web applications.",
-  knowsAbout: [
-    "Laravel",
-    "PHP",
-    "React",
-    "Next.js",
-    "REST API",
-    "MySQL",
-    "TailwindCSS",
-  ],
+  knowsAbout: ["Laravel", "PHP", "React", "Next.js", "REST API", "MySQL", "TailwindCSS"],
   sameAs: [
     "https://github.com/jaladedev",
     "https://linkedin.com/in/jaladedev",
@@ -133,6 +122,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="bg-ink-900 text-cream-100 font-sans antialiased">
+        <PageLoader />
         <Navbar />
         <main>{children}</main>
         <Footer />
