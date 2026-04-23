@@ -28,8 +28,8 @@ const about = {
 export default async function HomePage() {
   const [projects, skills, experience] = await Promise.all([
     getProjects({ limit: 3 }).catch(() => []),
-    getSkills().catch(() => []),
-    getExperience().catch(() => []),
+    getSkills().catch((err) => { console.error("Skills error:", err); return []; }),
+    getExperience().catch((err) => { console.error("Experience error:", err); return []; }),
   ]);
 
   return (
