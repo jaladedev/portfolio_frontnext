@@ -66,7 +66,7 @@ export default function PageLoader() {
         position: "fixed",
         inset: 0,
         zIndex: 9998,
-        background: "#0d0d0d",
+        background: "#ffffff",          // ← was #0d0d0d
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -82,7 +82,7 @@ export default function PageLoader() {
             fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)",
             fontSize: "1.9rem",
             letterSpacing: "0.35em",
-            color: "#f5f5f5",
+            color: "#111111",           // ← was #f5f5f5
           }}
         >
           <span style={{ opacity: 0.12 }}>Jalade.dev</span>
@@ -91,7 +91,7 @@ export default function PageLoader() {
             style={{
               position: "absolute",
               inset: 0,
-              color: "#4f9eff",
+              color: "#2563eb",         // ← was #4f9eff
               animation: "revealText 0.9s ease-in-out infinite",
             }}
           >
@@ -99,12 +99,12 @@ export default function PageLoader() {
           </span>
         </div>
 
-        <div style={{ width: "6rem", height: "1px", background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+        <div style={{ width: "6rem", height: "1px", background: "rgba(0,0,0,0.08)", overflow: "hidden" }}>
           <div
             style={{
               height: "100%",
               width: "100%",
-              background: "#4f9eff",
+              background: "#2563eb",    // ← was #4f9eff
               animation: "slideBar 0.9s ease-in-out infinite",
             }}
           />
