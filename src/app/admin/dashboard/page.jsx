@@ -69,6 +69,41 @@ export default function AdminDashboard() {
     if (user) loadData();
   }, [user, loadData]);
 
+  // ─── Revalidation ─────────────────────────────────────────────────────────
+  const revalidate = useCallback(async (paths) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ paths }),
+      });
+    } catch (e) {
+      console.error("Revalidate call failed:", e);
+    }
+  }, []);
+
+  // ─── Reorder ──────────────────────────────────────────────────────────────
+  const handleReorder = useCallback(async (a, b) => {
+    if (!a || !b) return;
+    const aOrder = a.sort_order ?? 0;
+    const bOrder = b.sort_order ?? 0;
+    try {
+      await Promise.all([
+        supabase.from("projects").update({ sort_order: bOrder }).eq("id", a.id),
+        supabase.from("projects").update({ sort_order: aOrder }).eq("id", b.id),
+      ]);
+      await loadData();
+      await revalidate(["/", "/projects"]);
+    } catch (e) {
+      console.error("Reorder failed:", e);
+    }
+  }, [loadData, revalidate]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/admin/login");
@@ -92,6 +127,15 @@ export default function AdminDashboard() {
     { key: "quotes",   label: "Quotes",   count: quotes.length },
   ];
 
+  // Next sort_order for a brand-new project: end of the list, not 0.
+  const nextSortOrder = projects.length
+    ? Math.max(...projects.map((p) => p.sort_order ?? 0)) + 1
+    : 0;
+
+  const nextSkillSortOrder = skills.length
+  ? Math.max(...skills.map((s) => s.sort_order ?? 0)) + 1
+  : 0;
+
   return (
     <div className="min-h-screen bg-ink-900">
 
@@ -108,8 +152,8 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="/"
+            
+              <a href="/"
               target="_blank"
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ink-500 text-cream-200/40 hover:text-cream-100 text-xs font-mono transition-colors"
             >
@@ -171,6 +215,7 @@ export default function AdminDashboard() {
             onAdd={() => setProjectModal({ open: true, editing: null })}
             onEdit={(p) => setProjectModal({ open: true, editing: p })}
             onDelete={(id) => setDeleteModal({ open: true, type: "project", id })}
+            onReorder={handleReorder}
           />
         )}
         {activeTab === "skills" && (
@@ -189,6 +234,7 @@ export default function AdminDashboard() {
       {projectModal.open && (
         <ProjectModal
           editing={projectModal.editing}
+          defaultSortOrder={nextSortOrder}
           saving={saving}
           error={formError}
           onClose={() => { setProjectModal({ open: false, editing: null }); setFormError(""); }}
@@ -208,14 +254,17 @@ export default function AdminDashboard() {
                 image_url = urlData.publicUrl;
               }
               const payload = { ...form, image_url };
+              let projectId = projectModal.editing?.id;
               if (projectModal.editing) {
                 const { error } = await supabase.from("projects").update(payload).eq("id", projectModal.editing.id);
                 if (error) throw error;
               } else {
-                const { error } = await supabase.from("projects").insert([payload]);
+                const { data, error } = await supabase.from("projects").insert([payload]).select("id").single();
                 if (error) throw error;
+                projectId = data.id;
               }
               await loadData();
+              await revalidate(["/", "/projects", `/projects/${projectId}`]);
               setProjectModal({ open: false, editing: null });
             } catch (e) {
               setFormError(e?.message || "Failed to save project.");
@@ -230,6 +279,7 @@ export default function AdminDashboard() {
       {skillModal.open && (
         <SkillModal
           editing={skillModal.editing}
+          defaultSortOrder={nextSkillSortOrder}
           saving={saving}
           error={formError}
           onClose={() => { setSkillModal({ open: false, editing: null }); setFormError(""); }}
@@ -265,6 +315,9 @@ export default function AdminDashboard() {
               const table = deleteModal.type === "project" ? "projects" : "skills";
               await supabase.from(table).delete().eq("id", deleteModal.id);
               await loadData();
+              if (deleteModal.type === "project") {
+                await revalidate(["/", "/projects", `/projects/${deleteModal.id}`]);
+              }
             } catch (e) {
               console.error(e);
             }
@@ -277,7 +330,7 @@ export default function AdminDashboard() {
 }
 
 // ─── Projects Tab ─────────────────────────────────────────────────────────────
-function ProjectsTab({ projects, onAdd, onEdit, onDelete }) {
+function ProjectsTab({ projects, onAdd, onEdit, onDelete, onReorder }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
@@ -291,8 +344,25 @@ function ProjectsTab({ projects, onAdd, onEdit, onDelete }) {
         <EmptyState icon={FolderOpen} message="No projects yet. Add your first one!" />
       ) : (
         <div className="space-y-3">
-          {projects.map((p) => (
+          {projects.map((p, i) => (
             <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-ink-600 bg-ink-800 hover:border-ink-500 transition-colors">
+              <div className="flex flex-col gap-0.5 flex-shrink-0">
+                <button
+                  onClick={() => onReorder(p, projects[i - 1])}
+                  disabled={i === 0}
+                  className="p-1 text-cream-200/30 hover:text-electric-400 disabled:opacity-20 disabled:hover:text-cream-200/30 transition-colors"
+                >
+                  <ChevronUp size={14} />
+                </button>
+                <button
+                  onClick={() => onReorder(p, projects[i + 1])}
+                  disabled={i === projects.length - 1}
+                  className="p-1 text-cream-200/30 hover:text-electric-400 disabled:opacity-20 disabled:hover:text-cream-200/30 transition-colors"
+                >
+                  <ChevronDown size={14} />
+                </button>
+              </div>
+
               {p.image_url ? (
                 <img src={p.image_url} alt={p.title} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
               ) : (
@@ -308,6 +378,7 @@ function ProjectsTab({ projects, onAdd, onEdit, onDelete }) {
                       featured
                     </span>
                   )}
+                  <span className="font-mono text-[10px] text-cream-200/25 flex-shrink-0">order: {p.sort_order ?? 0}</span>
                 </div>
                 {p.stack && <p className="font-mono text-xs text-electric-400/60 truncate">{p.stack}</p>}
                 <p className="text-cream-200/40 text-xs truncate mt-0.5">{p.summary}</p>
@@ -422,8 +493,8 @@ function MessagesTab({ messages, onRefresh }) {
               {expanded === m.id && (
                 <div className="px-4 pb-4 border-t border-ink-600">
                   <p className="text-cream-200/60 text-sm leading-relaxed mt-3">{m.message}</p>
-                  <a
-                    href={`mailto:${m.email}?subject=Re: Your message&body=Hi ${m.name},%0A%0A`}
+                  
+                    <a href={`mailto:${m.email}?subject=Re: Your message&body=Hi ${m.name},%0A%0A`}
                     className="inline-flex items-center gap-1.5 mt-4 text-electric-400/60 hover:text-electric-400 text-xs font-mono transition-colors"
                   >
                     Reply via email →
@@ -498,8 +569,8 @@ function QuotesTab({ quotes, onRefresh }) {
                     </select>
                   </div>
                   <p className="text-cream-200/60 text-sm leading-relaxed">{q.message}</p>
-                  <a
-                    href={`mailto:${q.email}?subject=Re: Your quote request&body=Hi ${q.name},%0A%0A`}
+                  
+                   <a href={`mailto:${q.email}?subject=Re: Your quote request&body=Hi ${q.name},%0A%0A`}
                     className="inline-flex items-center gap-1.5 text-electric-400/60 hover:text-electric-400 text-xs font-mono transition-colors"
                   >
                     Reply via email →
@@ -515,7 +586,7 @@ function QuotesTab({ quotes, onRefresh }) {
 }
 
 // ─── Project Modal ────────────────────────────────────────────────────────────
-function ProjectModal({ editing, saving, error, onClose, onSave }) {
+function ProjectModal({ editing, defaultSortOrder, saving, error, onClose, onSave }) {
   const [form, setForm] = useState({
     title:       editing?.title       || "",
     summary:     editing?.summary     || "",
@@ -525,7 +596,7 @@ function ProjectModal({ editing, saving, error, onClose, onSave }) {
     github:      editing?.github      || "",
     website:     editing?.website     || "",
     featured:    editing?.featured    || false,
-    sort_order:  editing?.sort_order  || 0,
+    sort_order:  editing ? (editing.sort_order ?? 0) : defaultSortOrder,
   });
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview]     = useState(editing?.image_url || null);
@@ -630,14 +701,17 @@ function ProjectModal({ editing, saving, error, onClose, onSave }) {
 }
 
 // ─── Skill Modal ──────────────────────────────────────────────────────────────
-function SkillModal({ editing, saving, error, onClose, onSave }) {
+function SkillModal({ editing, defaultSortOrder, saving, error, onClose, onSave }) {
   const [form, setForm] = useState({
     name:       editing?.name       || "",
     category:   editing?.category   || "",
-    sort_order: editing?.sort_order || 0,
+    sort_order: editing ? (editing.sort_order ?? 0) : defaultSortOrder,
   });
 
-  const categories = ["Frontend", "Backend", "Database", "DevOps", "Mobile", "Other"];
+  const categories = [
+    "Frontend", "Backend", "Database", "DevOps",
+    "Mobile", "Payments", "Cloud & Storage", "Testing", "Other",
+  ];
 
   return (
     <Modal title={editing ? "Edit Skill" : "New Skill"} onClose={onClose}>
