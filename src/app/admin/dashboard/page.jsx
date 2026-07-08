@@ -521,6 +521,7 @@ function ProjectModal({ editing, saving, error, onClose, onSave }) {
     summary:     editing?.summary     || "",
     description: editing?.description || "",
     stack:       editing?.stack       || "",
+    stack_tags:  editing?.stack_tags?.join(", ") || "",
     github:      editing?.github      || "",
     website:     editing?.website     || "",
     featured:    editing?.featured    || false,
@@ -536,7 +537,20 @@ function ProjectModal({ editing, saving, error, onClose, onSave }) {
 
   return (
     <Modal title={editing ? "Edit Project" : "New Project"} onClose={onClose}>
-      <form onSubmit={(e) => { e.preventDefault(); onSave(form, imageFile); }} className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const payload = {
+            ...form,
+            stack_tags: form.stack_tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean),
+          };
+          onSave(payload, imageFile);
+        }}
+        className="space-y-4"
+      >
         {error && <p className="text-red-400 text-xs p-3 rounded-lg bg-red-900/10 border border-red-400/20">{error}</p>}
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -547,6 +561,15 @@ function ProjectModal({ editing, saving, error, onClose, onSave }) {
             <input value={form.stack} onChange={e => setForm({ ...form, stack: e.target.value })} className={inputCls} placeholder="React, Laravel, MySQL" />
           </ModalField>
         </div>
+
+        <ModalField label="Stack Tags">
+          <input
+            value={form.stack_tags}
+            onChange={e => setForm({ ...form, stack_tags: e.target.value })}
+            className={inputCls}
+            placeholder="Next.js, Tailwind CSS, Laravel (comma-separated)"
+          />
+        </ModalField>
 
         <ModalField label="Summary *">
           <textarea required rows={2} value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} className={`${inputCls} resize-none`} placeholder="One-line description" />
