@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Github, ExternalLink, ArrowRight } from "lucide-react";
+import { use } from "react";
 
 export default function ProjectCard({ project, index = 0 }) {
   return (
