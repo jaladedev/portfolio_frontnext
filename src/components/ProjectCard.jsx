@@ -1,16 +1,26 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Github, ExternalLink, ArrowRight } from "lucide-react";
-import { use } from "react";
 
 export default function ProjectCard({ project, index = 0 }) {
+  const router = useRouter();
+
   return (
-    <article
-      className="group relative bg-ink-700 border border-ink-600 rounded-xl overflow-hidden
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={() => router.push(`/projects/${project.id}`)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          router.push(`/projects/${project.id}`);
+        }
+      }}
+      className="group relative block bg-ink-700 border border-ink-600 rounded-xl overflow-hidden
                  hover:border-electric-400/50 transition-all duration-500
-                 hover:shadow-[0_0_40px_rgba(79,158,255,0.1)]"
+                 hover:shadow-[0_0_40px_rgba(79,158,255,0.1)] cursor-pointer"
     >
       {/* Image */}
       <div className="relative h-48 overflow-hidden bg-ink-600">
@@ -83,16 +93,15 @@ export default function ProjectCard({ project, index = 0 }) {
             )}
           </div>
 
-          <Link
-            href={`/projects/${project.id}`}
+          <span
             className="flex items-center gap-1.5 font-mono text-xs text-cream-200/40
-                       hover:text-electric-400 transition-colors group/link"
+                       group-hover:text-electric-400 transition-colors"
           >
             View
-            <ArrowRight size={12} className="group-hover/link:translate-x-1 transition-transform" />
-          </Link>
+            <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+          </span>
         </div>
       </div>
-    </article>
+    </div>
   );
 }

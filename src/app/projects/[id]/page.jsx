@@ -12,8 +12,9 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
+  const { id } = await params;
   try {
-    const project = await getProject(params.id);
+    const project = await getProject(id);
     return {
       title: project.title,
       description: project.summary,
@@ -45,9 +46,10 @@ function projectJsonLd(project) {
 }
 
 export default async function ProjectDetailPage({ params }) {
+  const { id } = await params;
   let project;
   try {
-    project = await getProject(params.id);
+    project = await getProject(id);
   } catch {
     notFound();
   }
