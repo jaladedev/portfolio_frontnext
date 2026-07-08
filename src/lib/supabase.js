@@ -15,6 +15,7 @@ export async function getProjects({ limit, stack } = {}) {
   let query = supabase
     .from("projects")
     .select("*")
+    .order("featured", { ascending: false })
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
