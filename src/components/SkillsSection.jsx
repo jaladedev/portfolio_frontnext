@@ -2,6 +2,8 @@ const categoryColors = {
   Backend: "border-blue-400/30 text-blue-300",
   Frontend: "border-purple-400/30 text-purple-300",
   DevOps: "border-green-400/30 text-green-300",
+  Payments: "border-yellow-400/30 text-yellow-300",
+  "Cloud & Storage": "border-cyan-400/30 text-cyan-300",
 };
 
 export default function SkillsSection({ skills }) {
@@ -17,6 +19,8 @@ export default function SkillsSection({ skills }) {
     Backend: ["Laravel", "PHP", "MySQL","PostgreSQL", "REST API", "JWT Auth"],
     Frontend: ["React", "Next.js", "Tailwind CSS", "JavaScript"],
     DevOps: ["Git & GitHub", "Supabase", "Server Deployment"],
+    Payments: ["Paystack", "Monnify"],
+    "Cloud & Storage": ["AWS", "Cloudflare"],
   };
 
   const data = Object.keys(grouped).length ? grouped : fallbackSkills;
